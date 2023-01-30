@@ -1,0 +1,8 @@
+D:\Drive Zarteck\Escola\Projetos Microsoft Visual Studio (C#)\Trabalho_Avaliacao\bin\Debug\Trabalho_Avaliacao.exe.config
+D:\Drive Zarteck\Escola\Projetos Microsoft Visual Studio (C#)\Trabalho_Avaliacao\bin\Debug\Trabalho_Avaliacao.exe
+D:\Drive Zarteck\Escola\Projetos Microsoft Visual Studio (C#)\Trabalho_Avaliacao\bin\Debug\Trabalho_Avaliacao.pdb
+D:\Drive Zarteck\Escola\Projetos Microsoft Visual Studio (C#)\Trabalho_Avaliacao\obj\Debug\Trabalho_Avaliacao.csproj.AssemblyReference.cache
+D:\Drive Zarteck\Escola\Projetos Microsoft Visual Studio (C#)\Trabalho_Avaliacao\obj\Debug\Trabalho_Avaliacao.csproj.SuggestedBindingRedirects.cache
+D:\Drive Zarteck\Escola\Projetos Microsoft Visual Studio (C#)\Trabalho_Avaliacao\obj\Debug\Trabalho_Avaliacao.csproj.CoreCompileInputs.cache
+D:\Drive Zarteck\Escola\Projetos Microsoft Visual Studio (C#)\Trabalho_Avaliacao\obj\Debug\Trabalho_Avaliacao.exe
+D:\Drive Zarteck\Escola\Projetos Microsoft Visual Studio (C#)\Trabalho_Avaliacao\obj\Debug\Trabalho_Avaliacao.pdb
