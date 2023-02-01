@@ -11,36 +11,54 @@ namespace Trabalho_Avaliacao
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Dificuldade de jogo? ");
-            
-            // Criar a board
-            char[,] board1 = new char[10, 10];
-            char[,] board2 = new char[10, 10];
-            for (int i = 0; i < 10; i++)
+
+            int sizetabuleiro = 0;
+            char[,] board1 = new char[sizetabuleiro, sizetabuleiro];
+            char[,] board2 = new char[sizetabuleiro, sizetabuleiro];
+            int dificuldade = 0;
+
+            Console.WriteLine("Dificuldade de jogo? (1 - Facil [10*10] | 2 - medio [15*15] | 3 - dificil [2*20]");
+            dificuldade = int.Parse(Console.ReadLine());
+
+
+            if (dificuldade == 1)
             {
-                for (int j = 0; j < 10; j++)
+                sizetabuleiro = 10;
+            }
+            else if (dificuldade == 2)
+            {
+                sizetabuleiro = 15;
+            }
+            else if (dificuldade == 3)
+            {
+                sizetabuleiro = 20;
+            }
+
+
+            for (int i = 0; i < sizetabuleiro; i++)
+            {
+                for (int j = 0; j < sizetabuleiro; j++)
                 {
                     board1[i, j] = '.';
                     board2[i, j] = '.';
                 }
             }
+            // Inserir navios do player 1 na board
+            Console.WriteLine("Jogador 1, Insira os seus navios:");
+            InserirBarcos(board1);
 
-            // Place player 1's ships on the board
-            Console.WriteLine("Player 1, place your ships:");
-            PlaceShips(board1);
+            // Inserir barcos do player 2 na board
+            Console.WriteLine("Jogador 2, Insira os seus navios:");
+            InserirBarcos(board2);
 
-            // Place player 2's ships on the board
-            Console.WriteLine("Player 2, place your ships:");
-            PlaceShips(board2);
-
-            // Play the game
+            // comeco do jogo
             int currentPlayer = 1;
             while (true)
             {
                 char[,] currentBoard;
                 char[,] opponentBoard;
 
-                // Determine which board and opponent board to use based on the current player
+                // Mudar de vez de jogador
                 if (currentPlayer == 1)
                 {
                     currentBoard = board1;
@@ -52,14 +70,14 @@ namespace Trabalho_Avaliacao
                     opponentBoard = board1;
                 }
 
-                // Display the opponent's board
-                Console.WriteLine("Player " + currentPlayer + "'s turn:");
-                Console.WriteLine("Opponent's board:");
+                // Mostrar a board
+                Console.WriteLine("É a vez do jogador " + currentPlayer + ":");
+                Console.WriteLine("Tabuleiro do adversario:");
                 Console.WriteLine("  0 1 2 3 4 5 6 7 8 9");
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < sizetabuleiro; i++)
                 {
                     Console.Write(i + " ");
-                    for (int j = 0; j < 10; j++)
+                    for (int j = 0; j < sizetabuleiro; j++)
                     {
                         if (opponentBoard[i, j] == 'S')
                         {
@@ -93,9 +111,9 @@ namespace Trabalho_Avaliacao
 
                 // Check if the player sank all the opponent's ships
                 bool gameOver = true;
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < sizetabuleiro; i++)
                 {
-                    for (int j = 0; j < 10; j++)
+                    for (int j = 0; j < sizetabuleiro; j++)
                     {
                         if (opponentBoard[i, j] == 'S')
                         {
@@ -115,9 +133,9 @@ namespace Trabalho_Avaliacao
             }
         }
 
-        public void PlaceShips(char[,] board)
+        public void InserirBarcos(char[,] board)
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 8; i++)
             {
                 Console.Write("Enter row for ship " + (i + 1) + ": ");
                 int row = int.Parse(Console.ReadLine());
@@ -125,7 +143,7 @@ namespace Trabalho_Avaliacao
                 int col = int.Parse(Console.ReadLine());
                 board[row, col] = 'S';
             }
-            
+
         }
 
         public void tabuleiroSize(string dificuldade, int)
