@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -16,11 +17,37 @@ namespace Trabalho_Avaliacao
             int sizetabuleiro = 40;
             char[,] board1 = new char[sizetabuleiro, sizetabuleiro];
             char[,] board2 = new char[sizetabuleiro, sizetabuleiro];
-            int dificuldade = 0;
 
-            //perguntar a dificuldade
-            Console.WriteLine("Dificuldade de jogo? (1 - Facil [10x10] | 2 - medio [15x15] | 3 - dificil [20x20]");
-            dificuldade = int.Parse(Console.ReadLine());
+
+            int dificuldade = 0;
+            
+
+            while (dificuldade != 1 || dificuldade != 2 || dificuldade != 3)
+            {
+                try
+                {
+                    Console.WriteLine("Dificuldade de jogo? (1 - Facil [10x10] | 2 - medio [15x15] | 3 - dificil [20x20]");
+                    dificuldade = int.Parse(Console.ReadLine());
+                    if (dificuldade == 1 || dificuldade == 2 || dificuldade == 3) 
+                    {
+                        break;
+                    }
+                    else if(dificuldade >= 4  || dificuldade < 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Insira uma dificuldade valida!!\n");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+
+                }
+                catch
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Insira uma dificuldade valida!!\n");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+            }
+
             int loop = 1;
             while (loop == 1)
             {
@@ -40,13 +67,6 @@ namespace Trabalho_Avaliacao
                         sizetabuleiro = 20;
                         loop = 0;
                         break;
-                    default:
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Insira uma dificuldade valida!!\n");
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.WriteLine("Dificuldade de jogo? (1 - Facil [10x10] | 2 - medio [15x15] | 3 - dificil [20x20]");
-                        dificuldade = int.Parse(Console.ReadLine());
-                        break;
                 }
             }
 
@@ -60,16 +80,19 @@ namespace Trabalho_Avaliacao
                 }
             }
             // Inserir navios do player 1 na board
+            Console.Clear();
             Console.WriteLine($"Jogador 1, Insira os seus navios (APENAS VALORES ENTRE 0 e {sizetabuleiro - 1}):");
             InserirBarcos(board1 , sizetabuleiro);
 
             // Inserir barcos do player 2 na board
+            Console.Clear();
             Console.WriteLine($"Jogador 2, Insira os seus navios (APENAS VALORES ENTRE 0 e {sizetabuleiro - 1}):");
             InserirBarcos(board2 , sizetabuleiro);
 
             // comeco do jogo
             Console.Clear();
             int currentPlayer = 1;
+            int jogadas1 = 0, jogadas2 = 0, jogadasvencedor = 0;
             while (true)
             {
                 char[,] currentBoard;
@@ -80,16 +103,18 @@ namespace Trabalho_Avaliacao
                 {
                     currentBoard = board1;
                     opponentBoard = board2;
+                    jogadas1++;
                 }
                 else
                 {
                     currentBoard = board2;
                     opponentBoard = board1;
+                    jogadas2++;
                 }
 
                 // Mostrar a board
                 Console.WriteLine("É a vez do jogador " + currentPlayer + ":");
-                Console.WriteLine("Tabuleiro do adversario:");
+                Console.WriteLine("Tabuleiro do jogador atual:");
                 Console.Write("   ");
                 for (int i = 0; i < sizetabuleiro; i++)
                 {
@@ -109,13 +134,13 @@ namespace Trabalho_Avaliacao
                         
                     for (int j = 0; j < sizetabuleiro; j++)
                     {
-                        if (opponentBoard[i, j] == 'S')
+                        if (currentBoard[i, j] == 'S')
                         {
                             Console.Write(" . ");
                         }
                         else
                         {
-                            Console.Write(opponentBoard[i, j] + " ");
+                            Console.Write(currentBoard[i, j] + " ");
                         }
                     }
                     Console.WriteLine();
@@ -149,21 +174,25 @@ namespace Trabalho_Avaliacao
                     guessCol = int.Parse(Console.ReadLine());
                 }
 
+                
+
+                Console.Clear();
+
                 // Check se acertou ou nao
                 if (opponentBoard[guessRow, guessCol] == 'N')
                 {
-                    Console.WriteLine("EM CHEIOOOOO!");
                     Console.ForegroundColor = ConsoleColor.Green;
-                    opponentBoard[guessRow, guessCol] = '-';
+                    Console.WriteLine("\nEM CHEIOOOOO!\n");
                     Console.ForegroundColor = ConsoleColor.White;
+                    opponentBoard[guessRow, guessCol] = '-';
                 }
 
                 else
                 {
-                    Console.WriteLine("FALHASTE");
                     Console.ForegroundColor = ConsoleColor.Red;
-                    opponentBoard[guessRow, guessCol] = 'F';
+                    Console.WriteLine("\nFALHASTE\n");
                     Console.ForegroundColor = ConsoleColor.White;
+                    opponentBoard[guessRow, guessCol] = 'F';
                 }
 
                 // Verificar se o jogador afundou todos os navios
@@ -181,8 +210,52 @@ namespace Trabalho_Avaliacao
                 }
                 if (gameOver)
                 {
-                    Console.WriteLine("Jogador " + currentPlayer + " Afundou os todos os navios do adversario! Jogador " + currentPlayer + " ganha!");
+                    // inserir numero de jogadas do vencedor na variavel que vai ser usada para inserir no text file 
+                    if (currentPlayer == 1)
+                    {
+                        jogadasvencedor = jogadas1;
+                    }
+                    else
+                    {
+                        jogadasvencedor = jogadas2;
+                    }
+
+                    // high scores dos jogadores
+                    List<int> highScores = new List<int>();
+                    try
+                    {
+                        using (StreamReader reader = new StreamReader(@"C:\Ficheiros\highscores.txt"))
+                        {
+                            while (!reader.EndOfStream)
+                            {
+                                highScores.Add(int.Parse(reader.ReadLine()));
+                            }
+                        }
+                    
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        
+                    }
+                    // add dos scores
+                    highScores.Add(jogadasvencedor);
+
+                    // sort dos scores na lista
+                    highScores.Sort((a, b) => b - a);
+
+                    // escrever a lista no ficheiro
+                    using (StreamWriter writer = new StreamWriter(@"C:\Ficheiros\highscores.txt"))
+                    {
+                        foreach (int highScore in highScores)
+                        {
+                            writer.WriteLine(highScore);
+                        }
+                    }
+
+                    Console.WriteLine($"Jogador {currentPlayer} afundou os todos os navios do adversario em {jogadasvencedor} jogadas! Jogador {currentPlayer} ganha!");
+                    Console.ReadKey();
                     break;
+
                 }
 
                 // mudar de jogador
@@ -194,26 +267,54 @@ namespace Trabalho_Avaliacao
             {
                 for (int i = 0; i < 8; i++)
                 {
-                    Console.Write("Insira a linha do navio: " + (i + 1) + ": ");
+                    
+                    Console.Write("Insira a linha do navio " + (i + 1) + ": ");
                     int row = int.Parse(Console.ReadLine());
-                    while (row < 0 || row > Sizetabuleiro) 
+                    while (row < 0 || row > Sizetabuleiro - 1) 
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Insira um numero valido! (0 a {Sizetabuleiro - 1})");
+                        Console.WriteLine($"\nInsira um numero valido! (0 a {Sizetabuleiro - 1})\n");
                         Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write("Insira a linha do navio " + (i + 1) + ": ");
                         row = int.Parse(Console.ReadLine());
                     }
+
+                    
                     Console.Write("Insira a coluna do navio " + (i + 1) + ": ");
                     int col = int.Parse(Console.ReadLine());
-                    board[row, col] = 'N';
-
-                    while (col < 0 || col > Sizetabuleiro)
+                    while (col < 0 || col > Sizetabuleiro - 1)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Insira um numero valido! (0 a {Sizetabuleiro - 1})");
+                        Console.WriteLine($"\nInsira um numero valido! (0 a {Sizetabuleiro - 1})\n");
                         Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write("Insira a coluna do navio " + (i + 1) + ": ");
                         col = int.Parse(Console.ReadLine());
                     }
+                    while (board[row, col] == 'N')
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"\nCoordenada ocupada. Tente de novo!\n");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write("Insira a linha do navio " + (i + 1) + ": ");
+                        row = int.Parse(Console.ReadLine());
+                        while (row < 0 || row > Sizetabuleiro - 1)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"\nInsira um numero valido! (0 a {Sizetabuleiro - 1})\n");
+                            Console.ForegroundColor = ConsoleColor.White;
+                            row = int.Parse(Console.ReadLine());
+                        }
+                        Console.Write("Insira a coluna do navio " + (i + 1) + ": ");
+                        col = int.Parse(Console.ReadLine());
+                        while (col < 0 || col > Sizetabuleiro - 1)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"\nInsira um numero valido! (0 a {Sizetabuleiro - 1})\n");
+                            Console.ForegroundColor = ConsoleColor.White;
+                            col = int.Parse(Console.ReadLine());
+                        }
+                    }
+                    board[row, col] = 'N';
                 }
             }
             public char[,] Board { get; set; }

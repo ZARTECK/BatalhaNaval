@@ -14,3 +14,11 @@ D:\Drive Zarteck\Escola\Projetos Microsoft Visual Studio (C#)\New folder\Batalha
 D:\Drive Zarteck\Escola\Projetos Microsoft Visual Studio (C#)\New folder\BatalhaNaval\bin\Debug\Trabalho_Avaliacao.exe.config
 D:\Drive Zarteck\Escola\Projetos Microsoft Visual Studio (C#)\New folder\BatalhaNaval\bin\Debug\Trabalho_Avaliacao.exe
 D:\Drive Zarteck\Escola\Projetos Microsoft Visual Studio (C#)\New folder\BatalhaNaval\bin\Debug\Trabalho_Avaliacao.pdb
+C:\Users\ZARTECK\Documents\GitHub\BatalhaNaval\bin\Debug\Trabalho_Avaliacao.exe.config
+C:\Users\ZARTECK\Documents\GitHub\BatalhaNaval\bin\Debug\Trabalho_Avaliacao.exe
+C:\Users\ZARTECK\Documents\GitHub\BatalhaNaval\bin\Debug\Trabalho_Avaliacao.pdb
+C:\Users\ZARTECK\Documents\GitHub\BatalhaNaval\obj\Debug\Trabalho_Avaliacao.csproj.AssemblyReference.cache
+C:\Users\ZARTECK\Documents\GitHub\BatalhaNaval\obj\Debug\Trabalho_Avaliacao.csproj.SuggestedBindingRedirects.cache
+C:\Users\ZARTECK\Documents\GitHub\BatalhaNaval\obj\Debug\Trabalho_Avaliacao.csproj.CoreCompileInputs.cache
+C:\Users\ZARTECK\Documents\GitHub\BatalhaNaval\obj\Debug\Trabalho_Avaliacao.exe
+C:\Users\ZARTECK\Documents\GitHub\BatalhaNaval\obj\Debug\Trabalho_Avaliacao.pdb
