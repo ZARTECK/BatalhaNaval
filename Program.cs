@@ -11,15 +11,14 @@ namespace Trabalho_Avaliacao
 {
     internal class Program
     {
+
+        public static int sizetabuleiro = 40;
+        public static char[,] board2 = new char[sizetabuleiro, sizetabuleiro];
         static void Main(string[] args)
         {
 
-            int sizetabuleiro = 40;
-            char[,] board1 = new char[sizetabuleiro, sizetabuleiro];
-            char[,] board2 = new char[sizetabuleiro, sizetabuleiro];
-
-
-            int dificuldade = 0;
+        char[,] board1 = new char[sizetabuleiro, sizetabuleiro];
+        int dificuldade = 0;
             
 
             while (dificuldade != 1 || dificuldade != 2 || dificuldade != 3)
@@ -79,225 +78,516 @@ namespace Trabalho_Avaliacao
                     board2[i, j] = '.';
                 }
             }
-            // Inserir navios do player 1 na board
-            Console.Clear();
-            Console.WriteLine($"Jogador 1, Insira os seus navios (APENAS VALORES ENTRE 0 e {sizetabuleiro - 1}):");
-            InserirBarcos(board1 , sizetabuleiro);
+            // menu para pedir o modo de jogo pretendido
+            int modojogo = 0;
 
-            // Inserir barcos do player 2 na board
-            Console.Clear();
-            Console.WriteLine($"Jogador 2, Insira os seus navios (APENAS VALORES ENTRE 0 e {sizetabuleiro - 1}):");
-            InserirBarcos(board2 , sizetabuleiro);
-
-            // comeco do jogo
-            Console.Clear();
-            int currentPlayer = 1;
-            int jogadas1 = 0, jogadas2 = 0, jogadasvencedor = 0;
-            while (true)
+            while (modojogo != 1 || modojogo != 2)
             {
-                char[,] currentBoard;
-                char[,] opponentBoard;
-
-                // Mudar de vez de jogador
-                if (currentPlayer == 1)
+                try
                 {
-                    currentBoard = board1;
-                    opponentBoard = board2;
-                    jogadas1++;
-                }
-                else
-                {
-                    currentBoard = board2;
-                    opponentBoard = board1;
-                    jogadas2++;
-                }
-
-                // Mostrar a board
-                Console.WriteLine("É a vez do jogador " + currentPlayer + ":");
-                Console.WriteLine("Tabuleiro do jogador atual:");
-                Console.Write("   ");
-                for (int i = 0; i < sizetabuleiro; i++)
-                {
-                    Console.Write($"{i} ");
-                }
-                Console.WriteLine();
-                for (int i = 0; i < sizetabuleiro; i++)
-                {
-                    if(i <= 9)
+                    Console.WriteLine("Modo de jogo? (1 - contra player | 2 - contra computador)");
+                    modojogo = int.Parse(Console.ReadLine());
+                    if (modojogo == 1 || modojogo == 2)
                     {
-                        Console.Write(" " + i + " ");
+                        break;
                     }
-                    else
+                    else if (modojogo >= 3 || modojogo < 0)
                     {
-                        Console.Write(i + " ");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Insira um modo de jogo valido!!\n");
+                        Console.ForegroundColor = ConsoleColor.White;
                     }
-                        
-                    for (int j = 0; j < sizetabuleiro; j++)
-                    {
-                        if (currentBoard[i, j] == 'S')
-                        {
-                            Console.Write(" . ");
-                        }
-                        else
-                        {
-                            Console.Write(currentBoard[i, j] + " ");
-                        }
-                    }
-                    Console.WriteLine();
+
                 }
-
-                // jogada do jogador
-
-                int guessRow = 0;
-
-                Console.Write("Inserir linha:");
-                guessRow = int.Parse(Console.ReadLine());
-                
-                while (guessRow < 0 || guessRow > sizetabuleiro)
+                catch
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Insira um linha valida! (0 a {sizetabuleiro - 1})");
+                    Console.WriteLine("Insira um modo de jogo valido!!\n");
                     Console.ForegroundColor = ConsoleColor.White;
-                    guessRow = int.Parse(Console.ReadLine());
                 }
-                
-                int guessCol= 1;
-
-                Console.Write("Inserir coluna:");
-                guessCol = int.Parse(Console.ReadLine());
-
-                while (guessCol < 0 || guessCol > sizetabuleiro)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Insira um coluna valida! (0 a {sizetabuleiro - 1})");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    guessCol = int.Parse(Console.ReadLine());
-                }
-
-                
-
-                Console.Clear();
-
-                // Check se acertou ou nao
-                if (opponentBoard[guessRow, guessCol] == 'N')
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("\nEM CHEIOOOOO!\n");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    opponentBoard[guessRow, guessCol] = '-';
-                }
-
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\nFALHASTE\n");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    opponentBoard[guessRow, guessCol] = 'F';
-                }
-
-                // Verificar se o jogador afundou todos os navios
-                bool gameOver = true;
-                for (int i = 0; i < sizetabuleiro; i++)
-                {
-                    for (int j = 0; j < sizetabuleiro; j++)
-                    {
-                        if (opponentBoard[i, j] == 'N')
-                        {
-                            gameOver = false;
-                            break;
-                        }
-                    }
-                }
-                if (gameOver)
-                {
-                    // inserir numero de jogadas do vencedor na variavel que vai ser usada para inserir no text file 
-                    if (currentPlayer == 1)
-                    {
-                        jogadasvencedor = jogadas1;
-                    }
-                    else
-                    {
-                        jogadasvencedor = jogadas2;
-                    }
-
-                    // high scores dos jogadores
-                    List<string> highScores = new List<string>();
-                    try
-                    {
-                        using (StreamReader reader = new StreamReader(@"C:\Ficheiros\highscores.txt"))
-                        {
-                            while (!reader.EndOfStream)
-                            {
-                                highScores.Add(reader.ReadLine());
-                            }
-                        }
-                    
-                    }
-                    catch (FileNotFoundException)
-                    {
-                        
-                    }
-
-                    //ler os highscores da lista
-
-                    if (File.Exists("highscores.txt"))
-                    {
-                        using (StreamReader reader = new StreamReader(@"C:\Ficheiros\highscores.txt"))
-                        {
-                            string line;
-                            while ((line = reader.ReadLine()) != null)
-                            {
-                                highScores.Add(line);
-                            }
-                        }
-                    }
-                    
-                    // add dos scores
-                    highScores.Add(jogadasvencedor + " jogadas |  " + DateTime.Now.ToString());
-
-                    // sort dos scores na lista
-                    highScores.Sort((a, b) =>
-                    {
-                        int scoreA = int.Parse(a.Substring(0, a.IndexOf(" ")));
-                        int scoreB = -1;
-                        if (b.IndexOf(" ") != -1)
-                        {
-                            scoreB = int.Parse(b.Substring(0, b.IndexOf(" ")));
-                        }
-                        if (scoreB != scoreA)
-                        {
-                            return scoreA - scoreB;
-                        }
-                        try
-                        {
-                            return DateTime.Parse(b.Substring(b.IndexOf(" ") + 1)).CompareTo(DateTime.Parse(a.Substring(a.IndexOf(" ") + 1)));
-                        }
-                        catch (FormatException)
-                        {
-                            return 0;
-                        }
-                    });
-
-                    // escrever a lista no ficheiro
-                    using (StreamWriter writer = new StreamWriter(@"C:\Ficheiros\highscores.txt"))
-                    {
-                        foreach (string highScore in highScores)
-                        {
-                            writer.WriteLine(highScore);
-                        }
-                    }
-
-
-
-                    Console.WriteLine($"Jogador {currentPlayer} afundou os todos os navios do adversario em {jogadasvencedor} jogadas! Jogador {currentPlayer} ganha!");
-                    Console.ReadKey();
-                    break;
-
-                }
-
-                // mudar de jogador
-                currentPlayer = (currentPlayer == 1) ? 2 : 1;
             }
+
+
+            // menu para jogar contra player ou computador
+
+            int loop2 = 1;
+            while (loop2 == 1)
+            {
+                switch (modojogo)
+                {
+                    case 1:
+                        // Inserir navios do player 1 na board
+                        Console.Clear();
+                        Console.WriteLine($"Jogador 1, Insira os seus navios (APENAS VALORES ENTRE 0 e {sizetabuleiro - 1}):");
+                        InserirBarcos(board1, sizetabuleiro);
+
+                        // Inserir barcos do player 2 na board
+                        Console.Clear();
+                        Console.WriteLine($"Jogador 2, Insira os seus navios (APENAS VALORES ENTRE 0 e {sizetabuleiro - 1}):");
+                        InserirBarcos(board2, sizetabuleiro);
+
+                        // comeco do jogo
+                        Console.Clear();
+                        int currentPlayer = 1;
+                        int jogadas1 = 0, jogadas2 = 0, jogadasvencedor = 0;
+                        while (true)
+                        {
+                            char[,] currentBoard;
+                            char[,] opponentBoard;
+
+                            // Mudar de vez de jogador
+                            if (currentPlayer == 1)
+                            {
+                                currentBoard = board1;
+                                opponentBoard = board2;
+                                jogadas1++;
+                            }
+                            else
+                            {
+                                currentBoard = board2;
+                                opponentBoard = board1;
+                                jogadas2++;
+                            }
+
+                            // Mostrar a board
+                            Console.WriteLine("É a vez do jogador " + currentPlayer + ":");
+                            Console.WriteLine("Tabuleiro do jogador atual:");
+                            Console.Write("   ");
+                            for (int i = 0; i < sizetabuleiro; i++)
+                            {
+                                Console.Write($"{i} ");
+                            }
+                            Console.WriteLine();
+                            for (int i = 0; i < sizetabuleiro; i++)
+                            {
+                                if (i <= 9)
+                                {
+                                    Console.Write(" " + i + " ");
+                                }
+                                else
+                                {
+                                    Console.Write(i + " ");
+                                }
+
+                                for (int j = 0; j < sizetabuleiro; j++)
+                                {
+                                    if (currentBoard[i, j] == 'S')
+                                    {
+                                        Console.Write(" . ");
+                                    }
+                                    else
+                                    {
+                                        Console.Write(currentBoard[i, j] + " ");
+                                    }
+                                }
+                                Console.WriteLine();
+                            }
+
+                            // jogada do jogador
+
+                            int guessRow = 0;
+
+                            Console.Write("Inserir linha:");
+                            guessRow = int.Parse(Console.ReadLine());
+
+                            while (guessRow < 0 || guessRow > sizetabuleiro)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"Insira um linha valida! (0 a {sizetabuleiro - 1})");
+                                Console.ForegroundColor = ConsoleColor.White;
+                                guessRow = int.Parse(Console.ReadLine());
+                            }
+
+                            int guessCol = 1;
+
+                            Console.Write("Inserir coluna:");
+                            guessCol = int.Parse(Console.ReadLine());
+
+                            while (guessCol < 0 || guessCol > sizetabuleiro)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"Insira um coluna valida! (0 a {sizetabuleiro - 1})");
+                                Console.ForegroundColor = ConsoleColor.White;
+                                guessCol = int.Parse(Console.ReadLine());
+                            }
+
+
+
+                            Console.Clear();
+
+                            // Check se acertou ou nao
+                            if (opponentBoard[guessRow, guessCol] == 'N')
+                            {
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine("\nEM CHEIOOOOO!\n");
+                                Console.ForegroundColor = ConsoleColor.White;
+                                opponentBoard[guessRow, guessCol] = '-';
+                            }
+
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("\nFALHASTE\n");
+                                Console.ForegroundColor = ConsoleColor.White;
+                                opponentBoard[guessRow, guessCol] = 'F';
+                            }
+
+                            // Verificar se o jogador afundou todos os navios
+                            bool gameOver = true;
+                            for (int i = 0; i < sizetabuleiro; i++)
+                            {
+                                for (int j = 0; j < sizetabuleiro; j++)
+                                {
+                                    if (opponentBoard[i, j] == 'N')
+                                    {
+                                        gameOver = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (gameOver)
+                            {
+                                // inserir numero de jogadas do vencedor na variavel que vai ser usada para inserir no text file 
+                                if (currentPlayer == 1)
+                                {
+                                    jogadasvencedor = jogadas1;
+                                }
+                                else
+                                {
+                                    jogadasvencedor = jogadas2;
+                                }
+
+                                // high scores dos jogadores
+                                List<string> highScores = new List<string>();
+                                try
+                                {
+                                    using (StreamReader reader = new StreamReader(@"C:\Ficheiros\highscores.txt"))
+                                    {
+                                        while (!reader.EndOfStream)
+                                        {
+                                            highScores.Add(reader.ReadLine());
+                                        }
+                                    }
+
+                                }
+                                catch (FileNotFoundException)
+                                {
+
+                                }
+
+                                //ler os highscores da lista
+
+                                if (File.Exists("highscores.txt"))
+                                {
+                                    using (StreamReader reader = new StreamReader(@"C:\Ficheiros\highscores.txt"))
+                                    {
+                                        string line;
+                                        while ((line = reader.ReadLine()) != null)
+                                        {
+                                            highScores.Add(line);
+                                        }
+                                    }
+                                }
+
+                                // add dos scores
+                                highScores.Add(jogadasvencedor + " jogadas |  " + DateTime.Now.ToString());
+
+                                // sort dos scores na lista
+                                highScores.Sort((a, b) =>
+                                {
+                                    int scoreA = int.Parse(a.Substring(0, a.IndexOf(" ")));
+                                    int scoreB = -1;
+                                    if (b.IndexOf(" ") != -1)
+                                    {
+                                        scoreB = int.Parse(b.Substring(0, b.IndexOf(" ")));
+                                    }
+                                    if (scoreB != scoreA)
+                                    {
+                                        return scoreA - scoreB;
+                                    }
+                                    try
+                                    {
+                                        return DateTime.Parse(b.Substring(b.IndexOf(" ") + 1)).CompareTo(DateTime.Parse(a.Substring(a.IndexOf(" ") + 1)));
+                                    }
+                                    catch (FormatException)
+                                    {
+                                        return 0;
+                                    }
+                                });
+
+                                // escrever a lista no ficheiro
+                                using (StreamWriter writer = new StreamWriter(@"C:\Ficheiros\highscores.txt"))
+                                {
+                                    foreach (string highScore in highScores)
+                                    {
+                                        writer.WriteLine(highScore);
+                                    }
+                                }
+
+
+
+                                Console.WriteLine($"Jogador {currentPlayer} afundou os todos os navios do adversario em {jogadasvencedor} jogadas! Jogador {currentPlayer} ganha!");
+                                Console.ReadKey();
+                                break;
+
+                            }
+
+                            // mudar de jogador
+                            currentPlayer = (currentPlayer == 1) ? 2 : 1;
+                        }
+
+                        loop2 = 0;
+                        break;
+
+                    case 2:
+                        // Inserir navios do player 1 na board
+                        Console.Clear();
+                        Console.WriteLine($"Jogador 1, Insira os seus navios (APENAS VALORES ENTRE 0 e {sizetabuleiro - 1}):");
+                        InserirBarcos(board1, sizetabuleiro);
+
+                        // Inserir barcos do AI na board
+                        Random random = new Random();
+
+                        for (int i = 0; i < 8; i++)
+                        {
+                            
+                            int row = random.Next(0, sizetabuleiro);
+                            int col = random.Next(0, sizetabuleiro);
+                            board2[row, col] = 'N';
+                        }
+               
+
+                // comeco do jogo
+                Console.Clear();
+                        currentPlayer = 1;
+                        jogadas1 = 0; jogadas2 = 0; jogadasvencedor = 0;
+                        while (true)
+                        {
+                            char[,] currentBoard;
+                            char[,] opponentBoard;
+
+                            // Mudar de vez de jogador
+                            if (currentPlayer == 1)
+                            {
+                                currentBoard = board1;
+                                opponentBoard = board2;
+                                jogadas1++;
+                            }
+                            else
+                            {
+                                currentBoard = board2;
+                                opponentBoard = board1;
+                                jogadas2++;
+                            }
+
+                            // Mostrar a board
+                            Console.WriteLine("É a vez do jogador " + currentPlayer + ":");
+                            Console.WriteLine("Tabuleiro do jogador atual:");
+                            Console.Write("   ");
+                            for (int i = 0; i < sizetabuleiro; i++)
+                            {
+                                Console.Write($"{i} ");
+                            }
+                            Console.WriteLine();
+                            for (int i = 0; i < sizetabuleiro; i++)
+                            {
+                                if (i <= 9)
+                                {
+                                    Console.Write(" " + i + " ");
+                                }
+                                else
+                                {
+                                    Console.Write(i + " ");
+                                }
+
+                                for (int j = 0; j < sizetabuleiro; j++)
+                                {
+                                    if (currentBoard[i, j] == 'S')
+                                    {
+                                        Console.Write(" . ");
+                                    }
+                                    else
+                                    {
+                                        Console.Write(currentBoard[i, j] + " ");
+                                    }
+                                }
+                                Console.WriteLine();
+                            }
+
+                            // jogada do jogador
+
+                            int guessRow = 0;
+                            int guessCol = 1;
+                            if (currentPlayer== 1)
+                            {
+                                Console.Write("Inserir linha:");
+                                guessRow = int.Parse(Console.ReadLine());
+
+                               
+                                while (guessRow < 0 || guessRow > sizetabuleiro)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine($"Insira um linha valida! (0 a {sizetabuleiro - 1})");
+                                    Console.ForegroundColor = ConsoleColor.White;
+                                    guessRow = int.Parse(Console.ReadLine());
+                                }
+
+                                
+
+                                Console.Write("Inserir coluna:");
+                                guessCol = int.Parse(Console.ReadLine());
+
+                                while (guessCol < 0 || guessCol > sizetabuleiro)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine($"Insira um coluna valida! (0 a {sizetabuleiro - 1})");
+                                    Console.ForegroundColor = ConsoleColor.White;
+                                    guessCol = int.Parse(Console.ReadLine());
+                                }
+                            }
+                            else
+                            {
+                                // Ai random tiro
+                                guessRow = random.Next(0, sizetabuleiro);
+                                guessCol = random.Next(0, sizetabuleiro);
+                            }
+
+
+
+
+                            Console.Clear();
+
+                            // Check se acertou ou nao
+                            if (opponentBoard[guessRow, guessCol] == 'N')
+                            {
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine("\nEM CHEIOOOOO!\n");
+                                Console.ForegroundColor = ConsoleColor.White;
+                                opponentBoard[guessRow, guessCol] = '-';
+                            }
+
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("\nFALHASTE\n");
+                                Console.ForegroundColor = ConsoleColor.White;
+                                opponentBoard[guessRow, guessCol] = 'F';
+                            }
+
+                            // Verificar se o jogador afundou todos os navios
+                            bool gameOver = true;
+                            for (int i = 0; i < sizetabuleiro; i++)
+                            {
+                                for (int j = 0; j < sizetabuleiro; j++)
+                                {
+                                    if (opponentBoard[i, j] == 'N')
+                                    {
+                                        gameOver = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (gameOver)
+                            {
+                                // inserir numero de jogadas do vencedor na variavel que vai ser usada para inserir no text file 
+                                if (currentPlayer == 1)
+                                {
+                                    jogadasvencedor = jogadas1;
+                                }
+                                else
+                                {
+                                    jogadasvencedor = jogadas2;
+                                }
+
+                                // high scores dos jogadores
+                                List<string> highScores = new List<string>();
+                                try
+                                {
+                                    using (StreamReader reader = new StreamReader(@"C:\Ficheiros\highscores.txt"))
+                                    {
+                                        while (!reader.EndOfStream)
+                                        {
+                                            highScores.Add(reader.ReadLine());
+                                        }
+                                    }
+
+                                }
+                                catch (FileNotFoundException)
+                                {
+
+                                }
+
+                                //ler os highscores da lista
+
+                                if (File.Exists("highscores.txt"))
+                                {
+                                    using (StreamReader reader = new StreamReader(@"C:\Ficheiros\highscores.txt"))
+                                    {
+                                        string line;
+                                        while ((line = reader.ReadLine()) != null)
+                                        {
+                                            highScores.Add(line);
+                                        }
+                                    }
+                                }
+
+                                // add dos scores
+                                highScores.Add(jogadasvencedor + " jogadas |  " + DateTime.Now.ToString());
+
+                                // sort dos scores na lista
+                                highScores.Sort((a, b) =>
+                                {
+                                    int scoreA = int.Parse(a.Substring(0, a.IndexOf(" ")));
+                                    int scoreB = -1;
+                                    if (b.IndexOf(" ") != -1)
+                                    {
+                                        scoreB = int.Parse(b.Substring(0, b.IndexOf(" ")));
+                                    }
+                                    if (scoreB != scoreA)
+                                    {
+                                        return scoreA - scoreB;
+                                    }
+                                    try
+                                    {
+                                        return DateTime.Parse(b.Substring(b.IndexOf(" ") + 1)).CompareTo(DateTime.Parse(a.Substring(a.IndexOf(" ") + 1)));
+                                    }
+                                    catch (FormatException)
+                                    {
+                                        return 0;
+                                    }
+                                });
+
+                                // escrever a lista no ficheiro
+                                using (StreamWriter writer = new StreamWriter(@"C:\Ficheiros\highscores.txt"))
+                                {
+                                    foreach (string highScore in highScores)
+                                    {
+                                        writer.WriteLine(highScore);
+                                    }
+                                }
+
+
+
+                                Console.WriteLine($"Jogador {currentPlayer} afundou os todos os navios do adversario em {jogadasvencedor} jogadas! Jogador {currentPlayer} ganha!");
+                                Console.ReadKey();
+                                break;
+
+                            }
+
+                            // mudar de jogador
+                            currentPlayer = (currentPlayer == 1) ? 2 : 1;
+                        }
+
+
+
+
+
+                        loop2 = 0;
+                        break;
+                }
+            }
+
+
         }
       
             static void InserirBarcos(char[,] board , int Sizetabuleiro)
@@ -354,8 +644,8 @@ namespace Trabalho_Avaliacao
                     board[row, col] = 'N';
                 }
             }
-            public char[,] Board { get; set; }
-   
+
+        public char[,] Board { get; set; }
 
     }
 }
