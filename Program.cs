@@ -221,14 +221,14 @@ namespace Trabalho_Avaliacao
                     }
 
                     // high scores dos jogadores
-                    List<int> highScores = new List<int>();
+                    List<string> highScores = new List<string>();
                     try
                     {
                         using (StreamReader reader = new StreamReader(@"C:\Ficheiros\highscores.txt"))
                         {
                             while (!reader.EndOfStream)
                             {
-                                highScores.Add(int.Parse(reader.ReadLine()));
+                                highScores.Add(reader.ReadLine());
                             }
                         }
                     
@@ -237,16 +237,41 @@ namespace Trabalho_Avaliacao
                     {
                         
                     }
+
+                    //ler os highscores da lista
+
+                    if (File.Exists("highscores.txt"))
+                    {
+                        using (StreamReader reader = new StreamReader(@"C:\Ficheiros\highscores.txt"))
+                        {
+                            string line;
+                            while ((line = reader.ReadLine()) != null)
+                            {
+                                highScores.Add(line);
+                            }
+                        }
+                    }
+
                     // add dos scores
-                    highScores.Add(jogadasvencedor);
+                    highScores.Add(jogadasvencedor + " " + DateTime.Now.ToString());
+
 
                     // sort dos scores na lista
-                    highScores.Sort((a, b) => b - a);
+                    highScores.Sort((a, b) =>
+                    {
+                        int scoreA = int.Parse(a.Substring(0, a.IndexOf(" ")));
+                        int scoreB = int.Parse(b.Substring(0, b.IndexOf(" ")));
+                        if (scoreB != scoreA)
+                        {
+                            return scoreB - scoreA;
+                        }
+                        return DateTime.Parse(a.Substring(a.IndexOf(" ") + 1)).CompareTo(DateTime.Parse(b.Substring(b.IndexOf(" ") + 1)));
+                    });
 
                     // escrever a lista no ficheiro
                     using (StreamWriter writer = new StreamWriter(@"C:\Ficheiros\highscores.txt"))
                     {
-                        foreach (int highScore in highScores)
+                        foreach (string highScore in highScores)
                         {
                             writer.WriteLine(highScore);
                         }
