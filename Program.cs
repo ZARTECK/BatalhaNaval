@@ -251,21 +251,31 @@ namespace Trabalho_Avaliacao
                             }
                         }
                     }
-
+                    
                     // add dos scores
-                    highScores.Add(jogadasvencedor + " " + DateTime.Now.ToString());
-
+                    highScores.Add(jogadasvencedor + " jogadas |  " + DateTime.Now.ToString());
 
                     // sort dos scores na lista
                     highScores.Sort((a, b) =>
                     {
                         int scoreA = int.Parse(a.Substring(0, a.IndexOf(" ")));
-                        int scoreB = int.Parse(b.Substring(0, b.IndexOf(" ")));
+                        int scoreB = -1;
+                        if (b.IndexOf(" ") != -1)
+                        {
+                            scoreB = int.Parse(b.Substring(0, b.IndexOf(" ")));
+                        }
                         if (scoreB != scoreA)
                         {
-                            return scoreB - scoreA;
+                            return scoreA - scoreB;
                         }
-                        return DateTime.Parse(a.Substring(a.IndexOf(" ") + 1)).CompareTo(DateTime.Parse(b.Substring(b.IndexOf(" ") + 1)));
+                        try
+                        {
+                            return DateTime.Parse(b.Substring(b.IndexOf(" ") + 1)).CompareTo(DateTime.Parse(a.Substring(a.IndexOf(" ") + 1)));
+                        }
+                        catch (FormatException)
+                        {
+                            return 0;
+                        }
                     });
 
                     // escrever a lista no ficheiro
@@ -276,6 +286,8 @@ namespace Trabalho_Avaliacao
                             writer.WriteLine(highScore);
                         }
                     }
+
+
 
                     Console.WriteLine($"Jogador {currentPlayer} afundou os todos os navios do adversario em {jogadasvencedor} jogadas! Jogador {currentPlayer} ganha!");
                     Console.ReadKey();
@@ -290,7 +302,7 @@ namespace Trabalho_Avaliacao
       
             static void InserirBarcos(char[,] board , int Sizetabuleiro)
             {
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 2; i++)
                 {
                     
                     Console.Write("Insira a linha do navio " + (i + 1) + ": ");
